@@ -5,7 +5,16 @@ set -euo pipefail
 current_script_path=${BASH_SOURCE[0]}
 plugin_dir=$(dirname "$(dirname "$current_script_path")")
 
-TOOL_BINS=(sozo katana torii dojo-language-server)
+VERSION_NUMBER="${ASDF_INSTALL_VERSION#v}"
+ASDF_INSTALL_MAJOR_VERSION="${VERSION_NUMBER%%.*}"
+ASDF_INSTALL_MINOR_VERSION=$(echo "${VERSION_NUMBER}" | cut -d '.' -f 2)
+
+TOOL_BINS=(sozo dojo-language-server)
+
+if [ "${ASDF_INSTALL_MAJOR_VERSION}" -lt 1 ] || { [ "${ASDF_INSTALL_MAJOR_VERSION}" -eq 1 ] && [ "${ASDF_INSTALL_MINOR_VERSION}" -lt 5 ]; }; then
+    TOOL_BINS=(sozo katana torii dojo-language-server)
+fi
+
 
 # shellcheck source=./lib/utils.bash
 source "${plugin_dir}/lib/utils.bash"
